@@ -1,25 +1,18 @@
-// import { Text, View, TouchableOpacity } from "react-native";
-// import { useRouter } from "expo-router";
-// import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-// export default function Help() {
-//   const { back } = useRouter();
-//   const insets = useSafeAreaInsets();
-
-//   return (
-//     <View>
-//       <Text>Conversations</Text>
-//     </View>
-//   );
-// }
-
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImagePicker from 'react-native-image-picker';
 
-const Ajuda = () => {
+export function Ajuda() {
+  const [tituloProblema, setTituloProblema] = useState('');
   const [descricaoProblema, setDescricaoProblema] = useState('');
   const [imagem, setImagem] = useState(null);
+
+
+
+  const handleTituloChange = (text) => {
+    setTituloProblema(text);
+  };
 
   const handleDescricaoChange = (text) => {
     setDescricaoProblema(text);
@@ -33,7 +26,7 @@ const Ajuda = () => {
       chooseFromLibraryButtonTitle: 'Escolher da galeria',
     };
 
-    ImagePicker.showImagePicker(options, (response) => {
+    ImagePicker.showImagePicker(options, (response: any) => {
       if (response.didCancel) {
         console.log('Seleção de imagem cancelada');
       } else if (response.error) {
@@ -45,15 +38,31 @@ const Ajuda = () => {
     });
   };
 
-  const handleSubmit = () => {
-    // Enviar para a rota do firebase para ir por email.
-    console.log('Descrição do Problema:', descricaoProblema);
-    console.log('Imagem:', imagem);
-  };
+const handleSubmit = () => {
+  if (!tituloProblema || !descricaoProblema) {
+    // Se qualquer um dos campos obrigatórios não estiver preenchido, exiba uma mensagem de erro
+    alert('Por favor, preencha todos os campos obrigatórios.');
+    return; // Impede que o envio ocorra se algum campo obrigatório estiver em branco
+  }
+
+  // Confere se os campos obrigatórios estão preenchidos.
+  console.log('Título do Problema:', tituloProblema);
+  console.log('Descrição do Problema:', descricaoProblema);
+
+  // Envio dos dados para a rota do Firebase
+};
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Descrição do Problema:</Text>
+      <Text style={styles.label}>Título do Problema*:</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Digite o título do problema"
+        value={tituloProblema}
+        onChangeText={handleTituloChange}
+      />
+
+      <Text style={styles.label}>Descrição*:</Text>
       <TextInput
         style={styles.input}
         placeholder="Descreva seu problema"
@@ -69,15 +78,12 @@ const Ajuda = () => {
 
       {imagem && <Image source={{ uri: imagem }} style={styles.imagemSelecionada} />}
 
-      <TouchableOpacity
-        style={styles.sendButton}
-        onPress={handleSubmit}
-      >
+      <TouchableOpacity style={styles.sendButton} onPress={handleSubmit}>
         <Text style={styles.sendButtonText}>Enviar</Text>
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -127,4 +133,3 @@ const styles = StyleSheet.create({
 });
 
 export default Ajuda;
-
