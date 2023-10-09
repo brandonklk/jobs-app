@@ -1,4 +1,4 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Platform } from "react-native";
 import { Fragment, ReactNode } from "react";
 import { Tabs } from "expo-router/tabs";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";

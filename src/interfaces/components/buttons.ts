@@ -6,8 +6,15 @@ export interface ButtonAppProps {
   onPress: (event: GestureResponderEvent) => void;
 }
 
-export interface ButtonGroup {
-  children: JSX.Element | JSX.Element[];
+interface ListButtonGroup {
+  buttonName: string;
+  buttonId: number
+}
+
+export interface ButtonGroupProps {
+  buttons: Array<ListButtonGroup>;
+  buttonSelected: number
+  onPress: (buttonId: number) => void
 }
 
 export interface ButtonProps {

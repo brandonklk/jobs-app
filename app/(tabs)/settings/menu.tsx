@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { colors } from "@/constants/colors";
 import { routerMenu } from "@/constants/routes-menu";
 import { Ionicons } from "@expo/vector-icons";
+import Divider from "@/components/divider";
 
 export default function Menu() {
   const { push } = useRouter();
@@ -51,6 +52,7 @@ export default function Menu() {
               )}
             </Fragment>
           </TouchableOpacity>
+          <Divider />
         </View>
       ))}
     </ScrollView>
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
   containerScrollView: {
     flex: 1,
   },
-  containerButton: { padding: 8 },
+  containerButton: { paddingHorizontal: 8, paddingVertical: 4 },
   buttonList: {
     backgroundColor: colors.white,
     shadowColor: colors.gray[300],

@@ -13,15 +13,16 @@ import {
   Image,
   Alert,
   TouchableOpacity,
-  GestureResponderEvent,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { colors } from "@/constants/colors";
 import { colorIcon } from "@/constants/routes-menu";
 import { stylesApp } from "@/styles/appstyles";
+import ButtonGroup from "@/components/buttons/ButonGroup";
 
 export default function Profile() {
   const [image, setImage] = useState<string | null>(null);
+  const [buttonSelected, setButtonSelected] = useState<number>(1);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
 
   const selectImage = async () => {
@@ -52,9 +53,15 @@ export default function Profile() {
     console.log("values ", JSON.stringify(values, null, 2));
   };
 
-  const onPressGroupButton = (event: GestureResponderEvent) => {
-    console.log("Function not implemented.");
+  const onPressGroupButton = (buttonId: number) => {
+    setButtonSelected(buttonId)
   };
+
+  const screenProfile = {
+    return (
+      
+    )
+  }
 
   return (
     <View style={{ flex: 1, padding: 8 }}>
@@ -122,53 +129,15 @@ export default function Profile() {
               </Text>
             </View>
 
-            <View
-              style={{
-                marginVertical: 22,
-                justifyContent: "center",
-                flexDirection: "row",
-                flex: 1,
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  backgroundColor: colors.gray[100],
-                  flex: 1,
-                  borderColor: colors.sky[600],
-                  borderStartEndRadius: 8,
-                  borderWidth: 1,
-                  alignItems:'center',
-                }}
+            <View style={{ marginVertical: 22 }}>
+              <ButtonGroup
                 onPress={onPressGroupButton}
-              >
-                <Text style={stylesApp.textButton}>Perfil</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: colors.gray[100],
-                  flex: 1,
-                  borderColor: colors.sky[600],
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  alignItems:'center',
-                }}
-                onPress={onPressGroupButton}
-              >
-                <Text style={stylesApp.textButton}>1</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: colors.gray[100],
-                  flex: 1,
-                  borderColor: colors.sky[600],
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  alignItems:'center',
-                }}
-                onPress={onPressGroupButton}
-              >
-                <Text style={stylesApp.textButton}>1</Text>
-              </TouchableOpacity>
+                buttonSelected={buttonSelected}
+                buttons={[
+                  { buttonName: "Perfil", buttonId: 1 },
+                  { buttonName: "Configurações", buttonId: 2 },
+                ]}
+              ></ButtonGroup>
             </View>
 
             <View style={{ marginVertical: 22 }}>

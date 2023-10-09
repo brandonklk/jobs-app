@@ -56,7 +56,7 @@ export const Input = ({
 };
 
 const styles = StyleSheet.create({
-  container: { margin: 0 },
+  container: { margin: 4 },
   labelView: { margin: 0 },
   inputView: { margin: 0 },
   errorView: {
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   inputText: {
     fontSize: 22,
-    borderColor: colors.gray[200],
+    borderColor: colors.gray[300],
     borderWidth: 2,
     backgroundColor: colors.white,
     padding: 16,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   inputTextError: {
     fontSize: 22,
     backgroundColor: colors.white,
-    borderColor: colors.red[400],
+    borderColor: colors.red[300],
     borderWidth: 2,
     borderRadius: 4,
     padding: 16,
