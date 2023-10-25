@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ImagePicker from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+// import * as ImagePicker from "expo-image-picker";
 
 export function Ajuda() {
   const [tituloProblema, setTituloProblema] = useState('');
