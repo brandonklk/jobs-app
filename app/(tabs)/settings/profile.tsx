@@ -57,11 +57,11 @@ export default function Profile() {
     setButtonSelected(buttonId)
   };
 
-  const screenProfile = () => {
-    return (
+  // const screenProfile = () => {
+  //   return (
       
-    )
-  };
+  //   )
+  // };
 
   return (
     <View style={{ flex: 1, padding: 8 }}>
