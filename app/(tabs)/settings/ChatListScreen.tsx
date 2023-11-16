@@ -7,8 +7,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const ChatListScreen = () => {
   const navigation = useNavigation();
   const chats = [
-    { id: 1, name: 'João da Silva', lastMessage: 'Hello!', unreadCount: 0, lineColor: '#3606B5', userImage: require('./assets/user.png') },
-    { id: 2, name: 'Zé Carlos', lastMessage: 'Hi there!', unreadCount: 0, lineColor: '#3606B5', userImage: require('./assets/user.png') },
+    { id: 1, name: 'João da Silva', lastMessage: 'Hello!', unreadCount: 0, lineColor: '#3606B5', userImage: require('./assets/favicon.png') },
+    // { id: 2, name: 'Zé Carlos', lastMessage: 'Hi there!', unreadCount: 0, lineColor: '#3606B5', userImage: require('./assets/favicon.png') },
     // ... outros chats que tem ligação no firebase
   ];
 
