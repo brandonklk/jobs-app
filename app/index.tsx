@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Text, View, TextInput, TouchableOpacity, Image } from "react-native";
 import { useRouter } from "expo-router";
 import auth from '@react-native-firebase/auth';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import logo from 'assets/logo.png';
 
 export default function Login() {
