@@ -11,6 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import ChatListScreen from './ChatListScreen'; 
 
 const ChatScreen = ({ route }) => {
   const { chatId, chatName } = route.params;

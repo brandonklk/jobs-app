@@ -3,12 +3,13 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react
 import { useNavigation } from '@react-navigation/native';
 import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import ChatScreen from './ChatScreen';
 
 const ChatListScreen = () => {
   const navigation = useNavigation();
   const chats = [
-    { id: 1, name: 'João da Silva', lastMessage: 'Hello!', unreadCount: 0, lineColor: '#3606B5', userImage: require('./assets/favicon.png') },
-    // { id: 2, name: 'Zé Carlos', lastMessage: 'Hi there!', unreadCount: 0, lineColor: '#3606B5', userImage: require('./assets/favicon.png') },
+    { id: 1, name: 'João da Silva', lastMessage: 'Hello!', unreadCount: 0, lineColor: '#3606B5'},
+    { id: 2, name: 'Zé Carlos', lastMessage: 'Hi there!', unreadCount: 0, lineColor: '#3606B5'},
     // ... outros chats que tem ligação no firebase
   ];
 
