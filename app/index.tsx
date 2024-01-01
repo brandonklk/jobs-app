@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Text, View, TextInput, TouchableOpacity, Image } from "react-native";
 import { useRouter } from "expo-router";
-import auth from '@react-native-firebase/auth';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import logo from 'assets/logo.png';
+import logo from '../assets/logo.png';
 
 export default function Login() {
   const { push } = useRouter();
@@ -13,29 +11,22 @@ export default function Login() {
   const [name, setName] = useState("");
 
   const handleLogin = () => {
-    // Lógica de login aqui
-    // Você pode adicionar a lógica de autenticação com o email e senha fornecidos
     console.log("Email:", email);
     console.log("Password:", password);
-
-    // Exemplo: Navegar para a próxima tela após o login bem-sucedido
     push("(tabs)/map");
   };
 
   const handleCreateAccount = () => {
-    // Lógica para criar uma nova conta
     console.log("Name:", name);
     console.log("Email:", email);
     console.log("Password:", password);
-
-    // Exemplo: Navegar para a próxima tela após a criação de conta
     push("(tabs)/map");
   };
-  
+
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}><Image source={logo} style={styles.logo} />
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Image source={logo} style={styles.logo} />
       {newAccount ? (
-        // Tela para criar uma nova conta
         <View style={{ alignItems: "center" }}>
           <TextInput
             placeholder="Nome"
@@ -59,14 +50,11 @@ export default function Login() {
           <TouchableOpacity onPress={handleCreateAccount} style={[styles.button, { marginTop: 15 }]}>
             <Text style={{ color: "white" }}>Criar Conta</Text>
           </TouchableOpacity>
-
           <TouchableOpacity onPress={() => setNewAccount(false)} style={{ marginTop: 15 }}>
             <Text>Voltar para o login</Text>
           </TouchableOpacity>
-
         </View>
       ) : (
-        // Tela de login
         <View style={{ alignItems: "center" }}>
           <TextInput
             placeholder="Email"
@@ -89,13 +77,13 @@ export default function Login() {
           </TouchableOpacity>
         </View>
       )}
-
-      {/* Divider */}
+  
       <View style={{ marginVertical: 10, borderBottomColor: "black", borderBottomWidth: 1, width: 200 }} />
       <Text style={{ marginTop: 10, textAlign: "center", fontWeight: "bold" }}>Ou entre usando sua conta:</Text>
-
-      {/* Botões de login social em colunas */}
+  
+      {/* Social login buttons */}
       <View style={{ alignItems: "center" }}>
+        {/* Code for Google, Facebook, and Apple login buttons */}
         <TouchableOpacity onPress={() => console.log("Login com Google")} style={styles.socialButton}>
           <Image source={require('assets/google.png')} style={styles.socialIcon} />
         </TouchableOpacity>
@@ -108,8 +96,7 @@ export default function Login() {
       </View>
     </View>
   );
-}
-
+};  
 const styles = {
   input: {
     borderWidth: 1,
@@ -129,7 +116,7 @@ const styles = {
   socialButton: {
     padding: 10,
     alignItems: "center",
-    marginBottom: 8, // Espaço entre os botões
+    marginBottom: 8,
   },
   socialIcon: {
     width: 200,

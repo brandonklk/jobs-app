@@ -14,6 +14,7 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
+import axios from 'axios';
 import * as ImagePicker from "expo-image-picker";
 import { colors } from "@/constants/colors";
 import { colorIcon } from "@/constants/routes-menu";
@@ -24,6 +25,22 @@ export default function Profile() {
   const [image, setImage] = useState<string | null>(null);
   const [buttonSelected, setButtonSelected] = useState<number>(1);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+  const [addressInfo, setAddressInfo] = useState({
+    city: '',
+    state: '',
+    street: '',
+  });
+
+  const fetchAddressInfo = async (zipcode) => {
+    try {
+      const response = await axios.get(`https://viacep.com.br/ws/${zipcode}/json/`);
+      const { localidade: city, uf: state, logradouro: street } = response.data;
+
+      setAddressInfo({ city, state, street });
+    } catch (error) {
+      console.error('Error fetching address info:', error);
+    }
+  };
 
   const selectImage = async () => {
     const { granted } = await requestPermission();
@@ -117,7 +134,7 @@ export default function Profile() {
                       alignItems: "center",
                     }}
                   >
-                    <Text>Add Photo</Text>
+                    <Text>Adicionar Foto</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -160,7 +177,7 @@ export default function Profile() {
                 }}
               >
                 Introduza as informações desejadas, para alterar seu perfil.
-                Pode alterá-las em qualquer momento.
+                Você pode alterá-las a qualquer momento.
               </Text>
             </View>
 
@@ -223,7 +240,7 @@ export default function Profile() {
               </View>
               <View style={{ flex: 1 }}>
                 <Input
-                  label="Confirmação de senha"
+                  label="Repita a senha"
                   placeholder="Digite sua confirmação de senha"
                   value={values.passwordConfirmation}
                   onChange={handleChange("passwordConfirmation")}
@@ -239,73 +256,78 @@ export default function Profile() {
             </View>
 
             <View style={{ marginBottom: 12 }}>
-              <Input
-                label="Endereço residencial"
-                placeholder="Digite seu CEP"
-                value={String(values.address.zipcode)}
-                onChange={handleChange("address.zipcode")}
-                onFocus={() => setFieldTouched("address.zipcode", true)}
-                onBlur={() => setFieldTouched("address.zipcode")}
-                error={
-                  touched.address?.zipcode && errors.address?.zipcode
-                    ? errors.address?.zipcode
-                    : ""
-                }
-              />
+          <Input
+            label="Endereço residencial"
+            placeholder="Digite seu CEP"
+            value={String(values.address.zipcode)}
+            onChange={async (zipcode) => {
+              handleChange('address.zipcode')(zipcode);
+
+              // Fetch address info when zip code changes
+              await fetchAddressInfo(zipcode);
+            }}
+            onFocus={() => setFieldTouched('address.zipcode', true)}
+            onBlur={() => setFieldTouched('address.zipcode')}
+            error={
+              touched.address?.zipcode && errors.address?.zipcode
+                ? errors.address?.zipcode
+                : ''
+            }
+          />
+        </View>
+
+        <View style={{ marginBottom: 12, flexDirection: 'row' }}>
+          <View style={{ flex: 1 }}>
+            <Input
+              label="Estado"
+              placeholder="Digite seu estado"
+              value={values.address.state || addressInfo.state}
+              onChange={handleChange('address.state')}
+              onFocus={() => setFieldTouched('address.state', true)}
+              onBlur={() => setFieldTouched('address.state')}
+              error={
+                touched.address?.state && errors.address?.state
+                  ? errors.address?.state
+                  : ''
+              }
+            />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Input
+              label="Cidade"
+              placeholder="Digite o nome da sua cidade"
+              value={values.address.city || addressInfo.city}
+              onChange={handleChange('address.city')}
+              onFocus={() => setFieldTouched('address.city', true)}
+              onBlur={() => setFieldTouched('address.city')}
+              error={
+                touched.address?.city && errors.address?.city
+                  ? errors.address?.city
+                  : ''
+              }
+            />
+          </View>
             </View>
 
             <View style={{ marginBottom: 12, flexDirection: "row" }}>
+            <View style={{ marginBottom: 12 }}>
+          <Input
+            label="Rua"
+            placeholder="Digite o nome da rua"
+            value={values.address.street || addressInfo.street}
+            onChange={handleChange('address.street')}
+            onFocus={() => setFieldTouched('address.street', true)}
+            onBlur={() => setFieldTouched('address.street')}
+            error={
+              touched.address?.street && errors.address?.street
+                ? errors.address?.street
+                : ''
+            }
+          />
+        </View>
               <View style={{ flex: 1 }}>
                 <Input
-                  label="Estado"
-                  placeholder="Digite seu estado"
-                  value={values.address.state}
-                  onChange={handleChange("address.state")}
-                  onFocus={() => setFieldTouched("address.state", true)}
-                  onBlur={() => setFieldTouched("address.state")}
-                  error={
-                    touched.address?.state && errors.address?.state
-                      ? errors.address?.state
-                      : ""
-                  }
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Input
-                  label="Cidade"
-                  placeholder="Digite o nome da sua cidade"
-                  value={values.address.city}
-                  onChange={handleChange("address.city")}
-                  onFocus={() => setFieldTouched("address.city", true)}
-                  onBlur={() => setFieldTouched("address.city")}
-                  error={
-                    touched.address?.city && errors.address?.city
-                      ? errors.address?.city
-                      : ""
-                  }
-                />
-              </View>
-            </View>
-
-            <View style={{ marginBottom: 12, flexDirection: "row" }}>
-              <View style={{ flex: 1 }}>
-                <Input
-                  label="Rua"
-                  placeholder="Digite o nome da rua"
-                  value={values.address.street}
-                  onChange={handleChange("address.street")}
-                  onFocus={() => setFieldTouched("address.street", true)}
-                  onBlur={() => setFieldTouched("address.street")}
-                  error={
-                    touched.address?.street && errors.address?.street
-                      ? errors.address?.street
-                      : ""
-                  }
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Input
-                  label="Senha"
+                  label="Número"
                   placeholder="Digite sua senha"
                   value={String(values.address.number)}
                   onChange={handleChange("address.number")}
@@ -321,7 +343,7 @@ export default function Profile() {
             </View>
 
             <View>
-              <Button title="Entrar" onPress={() => handleSubmit()}></Button>
+              <Button title="Salvar" onPress={() => handleSubmit()}></Button>
             </View>
           </ScrollView>
         )}
