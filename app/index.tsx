@@ -90,9 +90,7 @@ export default function Login() {
         <TouchableOpacity onPress={() => console.log("Login com Facebook")} style={styles.socialButton}>
           <Image source={require('assets/facebook.png')} style={styles.socialIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => console.log("Login com Apple")} style={styles.socialButton}>
-          <Image source={require('assets/apple.png')} style={styles.socialIcon} />
-        </TouchableOpacity>
+
       </View>
     </View>
   );
