@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   inputText: {
-    fontSize: 22,
+    fontSize: 18,
     borderColor: colors.gray[300],
     borderWidth: 2,
     backgroundColor: colors.white,

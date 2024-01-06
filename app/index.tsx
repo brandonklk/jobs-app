@@ -2,6 +2,21 @@ import React, { useState } from "react";
 import { Text, View, TextInput, TouchableOpacity, Image } from "react-native";
 import { useRouter } from "expo-router";
 import logo from '../assets/logo.png';
+import { getFirestore, getDoc, doc } from 'firebase/firestore';
+import { initializeAuth, getReactNativePersistence, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import 'firebase/auth';
+import 'firebase/compat/auth';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/database';
+import firebaseConfig from '../app/src/Services/firebaseConfig.js';
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+firebase.initializeApp(firebaseConfig);
+
 
 export default function Login() {
   const { push } = useRouter();
@@ -10,19 +25,36 @@ export default function Login() {
   const [newAccount, setNewAccount] = useState(false);
   const [name, setName] = useState("");
 
+  const auth = firebase.auth();
+
   const handleLogin = () => {
-    console.log("Email:", email);
-    console.log("Password:", password);
-    push("(tabs)/map");
+    auth.signInWithEmailAndPassword(email, password) // Use signInWithEmailAndPassword diretamente com 'auth'
+      .then((userCredential) => {
+        // Login bem-sucedido, redirecionar para a página desejada
+        push("(tabs)/map");
+      })
+      .catch((error) => {
+        // Houve um erro no login
+        console.error("Erro ao fazer login:", error);
+        // Exibir mensagem de erro para o usuário
+      });
   };
 
   const handleCreateAccount = () => {
-    console.log("Name:", name);
-    console.log("Email:", email);
-    console.log("Password:", password);
-    push("(tabs)/map");
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        // Conta criada com sucesso
+        const user = userCredential.user;
+        console.log("Usuário criado com sucesso:", user);
+        push("(tabs)/map");
+      })
+      .catch((error) => {
+        // Houve um erro na criação da conta
+        console.error("Erro ao criar conta:", error);
+        // Exibir mensagem de erro para o usuário
+      });
   };
-
+  
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Image source={logo} style={styles.logo} />
