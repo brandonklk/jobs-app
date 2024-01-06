@@ -337,12 +337,6 @@ export default function CreateProfileWork() {
                 </View>
              {/* Botões de navegação */}
              <View style={styles.buttonContainer}>
-      <TouchableOpacity
-        style={styles.customButton}
-        onPress={handleCustomNextButtonSecondStep}
-      >
-        <Text style={{ color: 'white' }}>Avançar</Text>
-      </TouchableOpacity>
       
       {/* Botão de navegação para o step anterior */}
       <View>
@@ -354,6 +348,12 @@ export default function CreateProfileWork() {
             <Text style={{ color: 'white' }}>Anterior</Text>
           </TouchableOpacity>
         )}
+      <TouchableOpacity
+        style={styles.customButton}
+        onPress={handleCustomNextButtonSecondStep}
+      >
+        <Text style={{ color: 'white' }}>Avançar</Text>
+      </TouchableOpacity>
       </View>
     </View>
   </View>
