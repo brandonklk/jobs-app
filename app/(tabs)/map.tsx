@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, TextInput, StyleSheet, Image, Text } from "react-native";
+import { View, TextInput, StyleSheet, Image, Text, Modal, TouchableOpacity } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
 import { LocationObject, getCurrentPositionAsync, requestForegroundPermissionsAsync } from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,6 +19,7 @@ export default function Map() {
   const [region, setRegion] = useState<Region | undefined>(undefined);
   const [searchInput, setSearchInput] = useState("");
   const [markers, setMarkers] = useState<JSX.Element[]>([]);
+  const [selectedProfessional, setSelectedProfessional] = useState<any>(null);
 
   const requestLocationPermissions = async () => {
     const { granted } = await requestForegroundPermissionsAsync();
@@ -37,54 +38,59 @@ export default function Map() {
   const searchProfessionals = async () => {
     const dbRef = firebase.database().ref('data');
   
-    dbRef.once('value').then((snapshot) => {
-      const professionals = snapshot.val();
-      const newMarkers = [];
+    dbRef.once('value')
+      .then((snapshot) => {
+        const professionals = snapshot.val();
+        const newMarkers = [];
   
-      const userLatitude = region?.latitude || 0;
-      const userLongitude = region?.longitude || 0;
-      const radius = 0.1; // Ajuste o raio conforme necessário
+        const userLatitude = region?.latitude || 0;
+        const userLongitude = region?.longitude || 0;
+        const radius = 0.1; // Ajuste o raio conforme necessário
   
-      for (const professionalId in professionals) {
-        const professional = professionals[professionalId];
-  
-        if (
-          professional &&
-          professional.coords &&
-          professional.coords['0'] &&
-          professional.coords['1']
-        ) {
-          const latitude = professional.coords['0'];
-          const longitude = professional.coords['1'];
-  
-          const distance = Math.sqrt(
-            Math.pow(userLatitude - latitude, 2) + Math.pow(userLongitude - longitude, 2)
-          );
+        for (const professionalId in professionals) {
+          const professional = professionals[professionalId];
   
           if (
-            distance <= radius &&
-            (professional.name?.toLowerCase().includes(searchInput.toLowerCase()) ||
-              professional.serv?.toLowerCase().includes(searchInput.toLowerCase()))
+            professional &&
+            professional.coords &&
+            professional.coords['0'] &&
+            professional.coords['1'] &&
+            professional.name && // Garante que o nome esteja presente
+            professional.serv && // Garante que a profissão esteja presente
+            professional.photoURL // Garante que a URL da foto esteja presente
           ) {
-            newMarkers.push(
-              <Marker
-                key={professionalId}
-                coordinate={{ latitude, longitude }}
-                title={professional.name || ''}
-                // icon={<CustomMarker title={professional.name || ''} />} // Removido o pino personalizado
-              />
+            const latitude = professional.coords['0'];
+            const longitude = professional.coords['1'];
+  
+            const distance = Math.sqrt(
+              Math.pow(userLatitude - latitude, 2) + Math.pow(userLongitude - longitude, 2)
             );
+  
+            if (
+              distance <= radius &&
+              (professional.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+                professional.serv.toLowerCase().includes(searchInput.toLowerCase()))
+            ) {
+              const marker = (
+                <Marker
+                  key={professionalId}
+                  coordinate={{ latitude, longitude }}
+                  title={professional.name}
+                  onPress={() => setSelectedProfessional(professional)}
+                />
+              );
+              newMarkers.push(marker);
+            }
           }
         }
-      }
   
-      setMarkers(newMarkers);
-    }).catch((error) => {
-      console.error('Error fetching professionals:', error);
-    });
+        setMarkers(newMarkers);
+      })
+      .catch((error) => {
+        console.error('Error fetching professionals:', error);
+      });
   };
-
-
+  
   useEffect(() => {
     requestLocationPermissions();
     searchProfessionals();
@@ -103,39 +109,97 @@ export default function Map() {
       </View>
       {region && (
         <MapView initialRegion={region} style={styleMapsJobs.mapJobs}>
-          {markers.map((marker, index) => (
-            <Marker
-              key={index}
-              coordinate={{
-                latitude: marker.props.coordinate.latitude,
-                longitude: marker.props.coordinate.longitude,
-              }}
-              title={marker.props.title}
-            />
-          ))}
+          {markers.map((marker, index) => marker)}
         </MapView>
       )}
+    {/* Modal */}
+<Modal
+  visible={!!selectedProfessional}
+  transparent
+  animationType="slide"
+>
+  <View style={styles.modalContainer}>
+    {selectedProfessional && (
+      <TouchableOpacity
+        style={styles.modalContent}
+        onPress={() => setSelectedProfessional(null)}
+      >
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => setSelectedProfessional(null)}
+        >
+          <Ionicons name="close" size={24} color="white" />
+        </TouchableOpacity>
+        <View style={styles.professionalInfo}>
+          <Image
+            source={{ uri: selectedProfessional.photoURL }}
+            style={styles.profileImage}
+          />
+          <Text style={[styles.name, { color: 'white' }]}>{selectedProfessional.name}</Text>
+          <Text style={[styles.profession, { color: 'white' }]}>{selectedProfessional.serv}</Text>
+        </View>
+      </TouchableOpacity>
+    )}
+  </View>
+</Modal>
     </View>
   );
 }
-
-const styles = StyleSheet.create({ 
-  searchContainer: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    paddingHorizontal: 16, 
-    paddingTop: 45, 
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#411A87',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    position: 'relative', // Adiciona um posicionamento relativo para os elementos filhos se posicionarem relativamente
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  professionalInfo: {
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: 'white',
+  },
+  profession: {
+    fontSize: 16,
+    color: 'white',
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 45,
     backgroundColor: "white",
-  }, 
-  searchIcon: { 
-    marginRight: 8, 
-  }, 
-  searchInput: { 
-    flex: 1, 
-    height: 40, 
-    borderWidth: 1, 
-    borderColor: "black", 
-    borderRadius: 8, 
-    paddingHorizontal: 8, 
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    backgroundColor: 'white', 
   },
 });
