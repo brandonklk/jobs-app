@@ -13,6 +13,7 @@ export const routesExcludeTab = [
   `/${baseRouterSettings}/create-profile-work`,
   `/${baseRouterSettings}/settings-app`,
   `/${baseRouterSettings}/help`,
+  `/${baseRouterSettings}/premium`,
 ];
 
 export const routerMenu: ItemMenu[] = [
@@ -74,6 +75,16 @@ export const routerMenu: ItemMenu[] = [
     ),
     title: "Preciso de ajuda",
     subtitle: "Solicitar suporte para equipe Jobs Radar",
+    isMenuOption: true,
+  },
+  {
+    id: 6,
+    href: `${baseRouterSettings}/premium`, // Rota para a tela Premium
+    title: "Premium",
+    iconStart: (
+      <FontAwesome5 name="trophy" size={sizeIcon} color={colorIcon} /> // Ícone para o menu Premium
+    ),
+    subtitle: "Acesso a recursos e benefícios premium",
     isMenuOption: true,
   },
 ];

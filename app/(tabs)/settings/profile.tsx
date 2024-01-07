@@ -34,6 +34,7 @@ export default function Profile() {
   const [buttonSelected, setButtonSelected] = useState<number>(1);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   const [userDataLoaded, setUserDataLoaded] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [addressInfo, setAddressInfo] = useState({
     city: '',
     state: '',
@@ -49,19 +50,18 @@ export default function Profile() {
 useEffect(() => {
   const fetchUserDataAfterLogin = async () => {
     try {
-      // Lógica para verificar se o usuário está autenticado
       const currentUser = firebase.auth().currentUser;
-
+  
       if (currentUser) {
         const uid = currentUser.uid;
         setUserId(uid);
         setUserName(currentUser.displayName || '');
-
+  
         // Recuperar dados do Firestore
         const db = firebase.firestore();
         const userRef = db.collection('Usuarios').doc(uid);
         const doc = await userRef.get();
-
+  
         if (doc.exists) {
           const userDataFromFirestore = doc.data();
           setUserData((prevUserData) => ({
@@ -69,22 +69,29 @@ useEffect(() => {
             ...userDataFromFirestore,
           }));
         } else {
-          console.log('Nenhum documento encontrado!');
+          console.log('Nenhum documento encontrado no Firestore!');
         }
-
+  
         // Recuperar dados do AsyncStorage
         const userDataFromStorage = await AsyncStorage.getItem('userData');
         if (userDataFromStorage) {
-          setUserData(JSON.parse(userDataFromStorage));
+          // Atualizar apenas os campos que não estão no Firestore
+          const parsedUserData = JSON.parse(userDataFromStorage);
+          setUserData((prevUserData) => ({
+            ...prevUserData,
+            ...parsedUserData,
+          }));
         }
+  
         await getImageFromFirebaseStorage(uid);
-
+  
         setUserDataLoaded(true); // Marcar que os dados foram carregados
       }
     } catch (error) {
       console.error('Erro ao recuperar dados após o login:', error);
     }
   };
+  
 
   // Chama a função após o login
   fetchUserDataAfterLogin();
@@ -163,14 +170,29 @@ const sendDataToFirestore = async (values, userId) => {
   const fetchData = async () => {
     try {
       const currentUser = firebase.auth().currentUser;
-
+  
       if (currentUser) {
         const uid = currentUser.uid;
         setUserId(uid);
         setUserName(currentUser.displayName || '');
-
-        // Resto da sua lógica para recuperar os dados do usuário...
-
+  
+        // Recuperar dados do Firestore
+        const db = firebase.firestore();
+        const userRef = db.collection('Usuarios').doc(uid);
+        const doc = await userRef.get();
+  
+        if (doc.exists) {
+          const userDataFromFirestore = doc.data();
+          setUserData((prevUserData) => ({
+            ...prevUserData,
+            ...userDataFromFirestore,
+          }));
+        } else {
+          console.log('Nenhum documento encontrado no Firestore!');
+        }
+  
+        // Resto da lógica para recuperar dados do usuário...
+  
         // Recuperar dados do AsyncStorage
         const userDataFromStorage = await AsyncStorage.getItem('userData');
         if (userDataFromStorage) {
@@ -181,6 +203,7 @@ const sendDataToFirestore = async (values, userId) => {
       console.error('Erro ao recuperar dados:', error);
     }
   };
+  
 
 const handleFormSubmit = (updatedUserData) => {
   // Atualize os dados do usuário no Firestore
@@ -200,46 +223,26 @@ const onSubmit = async (
   values: UserValue,
   formikHelpers: FormikHelpers<UserValue>
 ) => {
-  const updatedUserData = {
+  try {
+    if (image) {
+      await uploadImageToFirebase(image, userId);
+      await getImageFromFirebaseStorage(userId);
+    }
 
-    firstName: values.firstName,
-    lastName: values.lastName,
-    email: values.email,
-    zipcode: values.address.zipcode, 
-    city: values.address.city,
-    street: values.address.street, 
-    state: values.address.state,
-    number: values.address.number,
-   
-  };
+    // Enviar dados atualizados para o Firestore
+    await sendDataToFirestore(values, userId);
 
-  if (image) {
-    await uploadImageToFirebase(image, userId);
-    await getImageFromFirebaseStorage(userId);
+    // Atualizar estados para exibir os dados atualizados
+    setUserData(values); // Atualiza o estado com os novos dados
+    setImage(image); // Se a imagem mudou, atualize o estado aqui
+
+    // Exibir alerta após salvar os dados
+    showAlertMessage('Os dados foram salvos com sucesso!');
+  } catch (error) {
+    console.error('Erro ao salvar os dados:', error);
+    showAlertMessage('Ocorreu um erro ao salvar os dados. Por favor, tente novamente.');
   }
-
-   // Enviar dados atualizados para o Firestore
-   await sendDataToFirestore(updatedUserData, userId);
-   // Atualizar os campos do formulário com os novos valores
-  formikHelpers.setValues({
-    ...values,
-    ...updatedUserData,
-  });
-  // Atualizar estados para exibir os dados atualizados
-  setUserData({ ...userData, ...updatedUserData });
-  setImage(image); // Se a imagem mudou, atualize o estado aqui
 };
-// Exibir alerta após salvar os dados
-Alert.alert('Dados Salvos', 'Os dados foram salvos com sucesso!', [
-  {
-    text: 'OK',
-    onPress: () => {
-      // Adicione aqui qualquer ação que você queira fazer após o OK no alerta
-      console.log('Usuário pressionou OK no alerta');
-    },
-  },
-]);
-
 
 const onPressGroupButton = (buttonId: number) => {
   setButtonSelected(buttonId);
@@ -257,6 +260,20 @@ const onPressGroupButton = (buttonId: number) => {
       console.error('Error fetching address info:', error);
     }
   };
+
+    // Função para exibir o alerta
+    const showAlertMessage = (message) => {
+      setShowAlert(true);
+      Alert.alert('Alerta', message, [
+        {
+          text: 'OK',
+          onPress: () => {
+            setShowAlert(false); // Oculta o alerta quando o usuário pressiona OK
+            console.log('Usuário pressionou OK no alerta');
+          },
+        },
+      ]);
+    };
 
   return (
     <View style={{ flex: 1, padding: 8 }}>

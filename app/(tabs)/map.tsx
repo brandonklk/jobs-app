@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { View, TextInput, StyleSheet, Image, Text, Modal, TouchableOpacity } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
 import { LocationObject, getCurrentPositionAsync, requestForegroundPermissionsAsync } from "expo-location";
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
 import { styleMapsJobs } from "@/styles/mapsstyles";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import firebaseConfig from '../src/Services/firebaseConfig';
+import Works from './works';
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -15,11 +17,13 @@ if (!firebase.apps.length) {
 const PinIcon = require('../../assets/pin.png');
 
 export default function Map() {
+  const navigation = useNavigation();
   const [location, setLocation] = useState<LocationObject>({} as LocationObject);
   const [region, setRegion] = useState<Region | undefined>(undefined);
   const [searchInput, setSearchInput] = useState("");
   const [markers, setMarkers] = useState<JSX.Element[]>([]);
   const [selectedProfessional, setSelectedProfessional] = useState<any>(null);
+  
 
   const requestLocationPermissions = async () => {
     const { granted } = await requestForegroundPermissionsAsync();
@@ -96,6 +100,12 @@ export default function Map() {
     searchProfessionals();
   }, [searchInput]);
 
+  const handleVerPerfil = (selectedProfessional: any) => {
+    // Aqui você pode passar os detalhes do profissional para a próxima tela
+    navigation.navigate('works', { professional: selectedProfessional });
+  };
+  
+  
   return (
     <View style={styleMapsJobs.containerMap}>
       <View style={styles.searchContainer}>
@@ -118,25 +128,31 @@ export default function Map() {
   transparent
   animationType="slide"
 >
-  <View style={styles.modalContainer}>
-    {selectedProfessional && (
+<View style={styles.modalContainer}>
+  {selectedProfessional && (
+    <TouchableOpacity
+      style={styles.modalContent}
+      onPress={() => setSelectedProfessional(null)}
+    >
       <TouchableOpacity
-        style={styles.modalContent}
+        style={styles.closeButton}
         onPress={() => setSelectedProfessional(null)}
       >
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={() => setSelectedProfessional(null)}
-        >
-          <Ionicons name="close" size={24} color="white" />
-        </TouchableOpacity>
-        <View style={styles.professionalInfo}>
-          <Image
-            source={{ uri: selectedProfessional.photoURL }}
-            style={styles.profileImage}
-          />
-          <Text style={[styles.name, { color: 'white' }]}>{selectedProfessional.name}</Text>
-          <Text style={[styles.profession, { color: 'white' }]}>{selectedProfessional.serv}</Text>
+        <Ionicons name="close" size={24} color="white" />
+      </TouchableOpacity>
+      <View style={styles.professionalInfo}>
+        <Image
+          source={{ uri: selectedProfessional.photoURL }}
+          style={styles.profileImage}
+        />
+        <Text style={[styles.name, { color: 'white' }]}>{selectedProfessional.name}</Text>
+        <Text style={[styles.profession, { color: 'white' }]}>{selectedProfessional.serv}</Text>
+
+        {/* Botão "Ver Perfil" */}
+        <TouchableOpacity onPress={() => handleVerPerfil(selectedProfessional)} style={styles.verPerfilButton}>
+  <Text style={styles.verPerfilButtonText}>Ver Perfil</Text>
+</TouchableOpacity>
+
         </View>
       </TouchableOpacity>
     )}
@@ -201,5 +217,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 8,
     backgroundColor: 'white', 
+  },
+  verPerfilButton: {
+    backgroundColor: '#BCE56C',
+    borderRadius: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  verPerfilButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
