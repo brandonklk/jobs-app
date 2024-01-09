@@ -18,6 +18,7 @@ const MyCustomTabBar = ({ state, navigation }: BottomTabBarProps) => {
   const sizeIcon = 28;
   const pathName = usePathname();
   const hidderScreenChildren = routesExcludeTab.includes(pathName);
+  
 
   const getIcon = (namePage: string, color: string) => {
     let icon: ReactNode;

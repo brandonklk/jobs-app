@@ -228,12 +228,9 @@ export default function CreateProfileWork() {
                   onBlur={handleBlur('serviceDescription')}
                 />
                 {/* Seu botão personalizado para avançar */}
-                <TouchableOpacity
-                  style={styles.customButton}
-                  onPress={handleCustomNextButton}
-                >
-                  <Text style={{ color: 'white' }}>Avançar</Text>
-                </TouchableOpacity>
+                <TouchableOpacity style={{ ...styles.customButton, alignSelf: 'flex-end' }} onPress={handleCustomNextButton}>
+      <Text style={{ color: 'white' }}>Avançar</Text>
+    </TouchableOpacity>
               </View>
             </ProgressStep>
 
@@ -340,20 +337,14 @@ export default function CreateProfileWork() {
       
       {/* Botão de navegação para o step anterior */}
       <View>
-        {currentStep > 0 && (
-          <TouchableOpacity
-            style={styles.customButton}
-            onPress={() => setCurrentStep(currentStep - 1)}
-          >
-            <Text style={{ color: 'white' }}>Anterior</Text>
-          </TouchableOpacity>
-        )}
-      <TouchableOpacity
-        style={styles.customButton}
-        onPress={handleCustomNextButtonSecondStep}
-      >
-        <Text style={{ color: 'white' }}>Avançar</Text>
+      {currentStep > 0 && (
+      <TouchableOpacity style={styles.customButton} onPress={() => setCurrentStep(currentStep - 1)}>
+        <Text style={{ color: 'white' }}>Anterior</Text>
       </TouchableOpacity>
+    )}
+    <TouchableOpacity style={{ ...styles.customButton, alignSelf: 'flex-end' }} onPress={handleCustomNextButtonSecondStep}>
+      <Text style={{ color: 'white' }}>Avançar</Text>
+    </TouchableOpacity>
       </View>
     </View>
   </View>
@@ -391,29 +382,19 @@ export default function CreateProfileWork() {
     />
     {/* Botão Salvar */}
   {/* Botão Anterior */}
-{currentStep > 0 && (
-  <TouchableOpacity
-    style={styles.customButton}
-    onPress={() => setCurrentStep(currentStep - 1)}
-  >
-    <Text style={{ color: 'white' }}>Anterior</Text>
-  </TouchableOpacity>
-)}
-
-{/* Botão Enviar - renderizado apenas no último step */}
-{currentStep === totalSteps - 1 && (
-  <TouchableOpacity
-    style={styles.customButton}
-    onPress={handleSubmit}
-    disabled={currentStep !== totalSteps - 1}
-  >
-    <Text style={{ color: 'white' }}>Salvar</Text>
-  </TouchableOpacity>
-)}
-
-
-    </View>
-  </ProgressStep>
+  {currentStep > 0 && (
+      <TouchableOpacity style={styles.customButton} onPress={() => setCurrentStep(currentStep - 1)}>
+        <Text style={{ color: 'white' }}>Anterior</Text>
+      </TouchableOpacity>
+    )}
+    {/* Botão Enviar - renderizado apenas no último step */}
+    {currentStep === totalSteps - 1 && (
+      <TouchableOpacity style={{ ...styles.customButton, alignSelf: 'flex-end' }} onPress={handleSubmit} disabled={currentStep !== totalSteps - 1}>
+        <Text style={{ color: 'white' }}>Salvar</Text>
+      </TouchableOpacity>
+    )}
+  </View>
+</ProgressStep>
 </ProgressSteps>
         )}
       </Formik>
@@ -449,12 +430,17 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   customButton: {
-    backgroundColor: 'blue', // Cor de fundo do botão
+    backgroundColor: '#400078', // Cor de fundo do botão
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12, // Espaçamento vertical interno
-    paddingHorizontal: 20, // Espaçamento horizontal interno
+    width: 150, // Largura fixa de 150px
+    height: 40, // Altura fixa de 40px
     borderRadius: 5, // Borda arredondada
-    padding: 10,
+    marginTop: 10, // Espaçamento superior entre os botões
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
   },
 });

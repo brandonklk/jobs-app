@@ -1,14 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Conversations from './settings/conversations';
 
 const Works = () => {
   const route = useRoute();
-  const { professional } = route.params;
+  const navigation = useNavigation();
 
-  const handleSendMessage = () => {
-    // Lógica para enviar mensagem para o profissional
-    console.log("Enviar mensagem para:", professional.name);
+  const professional = route.params?.professional;
+  
+
+  const handleSendMessage = (professionalId, professionalName) => {
+    navigation.navigate('conversations', {
+      chatId: professionalId,
+      chatName: professionalName,
+    });    
+  };
+  
+  
+  
+  
+  const renderPaymentIcons = () => {
+    const { card, money } = professional;
+    const icons = [];
+    if (card) {
+      icons.push(
+        <Icon key="card" name="credit-card" size={30} color="#BCE56C" />
+      );
+    }
+    if (money) {
+      icons.push(
+        <Icon key="money" name="money" size={30} color="#BCE56C" />
+      );
+    }
+    return icons;
   };
 
   return (
@@ -19,17 +45,27 @@ const Works = () => {
         <View style={[styles.colorSection, { flex: 30, backgroundColor: '#411A87' }]} />
         <View style={[styles.colorSection, { flex: 10, backgroundColor: '#160040' }]} />
       </View>
-      <View style={styles.content}>
-        <View style={styles.profileContainer}>
-          <Image source={{ uri: professional.photoURL }} style={styles.profileImage} />
-          <Text style={styles.name}>{professional.name}</Text>
-          <Text style={styles.profession}>{professional.serv}</Text>
-          <Text style={styles.description}>{professional.desc}</Text>
+      {professional && (
+        <View style={styles.content}>
+          <View style={styles.profileContainer}>
+            <Image source={{ uri: professional.photoURL }} style={styles.profileImage} />
+            <Text style={styles.name}>{professional.name}</Text>
+            <Text style={styles.profession}>{professional.serv}</Text>
+            <Text style={styles.description}>{professional.desc}</Text>
+          </View>
+          <View style={styles.paymentMethods}>
+        <Text style={styles.paymentLabel}>Métodos de Pagamento:</Text>
+        <View style={styles.paymentIcons}>
+          {renderPaymentIcons()}
         </View>
-        <TouchableOpacity style={styles.sendMessageButton} onPress={handleSendMessage}>
-          <Text style={styles.buttonText}>Enviar Mensagem</Text>
-        </TouchableOpacity>
       </View>
+          <TouchableOpacity
+            style={styles.sendMessageButton}
+            onPress={() => handleSendMessage(professional.uid, professional.name)}>
+            <Text style={styles.buttonText}>Enviar Mensagem</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -94,6 +130,27 @@ const styles = StyleSheet.create({
   },
   colorSection: {
     flex: 1,
+  },
+  paymentMethods: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  paymentLabel: {
+    marginRight: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  paymentIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconText: {
+    marginHorizontal: 5, // Ajuste o espaçamento horizontal conforme necessário
   },
 });
 

@@ -1,7 +1,7 @@
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import ChatListScreen from './ChatListScreen';
+import ChatListScreen from './chat-list';
 import ChatScreen from './ChatScreen';
-import Swipeout from 'react-native-swipeout';
 
 const Stack = createStackNavigator();
 

@@ -1,5 +1,6 @@
+import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Image } from "react-native";
-import React, { useState } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native'; 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -7,19 +8,27 @@ import { NavigationContainer } from '@react-navigation/native';
 
 
 export default function Conversations() {
-  // const { back } = useRouter();
-  // const insets = useSafeAreaInsets();
+  const route = useRoute();
+  const navigation = useNavigation();
+  const { chatName } = route.params || {};
 
-  function Message({ text, isSender, userId, time }) {
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: `Conversa com ${chatName}`,
+    });
+  }, [navigation, chatName]);
+
+
+  function Message({ text, isSender, userId }) {
     return (
       <View style={[styles.message, isSender ? styles.senderMessage : styles.receiverMessage]}>
         <View style={styles.messageHeader}>
-          <Text style={styles.messageTime}>{time}</Text> {/* Exibe a hora individual da mensagem */}
         </View>
         <Text style={styles.messageText}>{text}</Text>
       </View>
     );
   }
+  
 
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([]);
@@ -29,15 +38,13 @@ export default function Conversations() {
     setModalVisible(!isModalVisible);
   };
 
-   const handleSend = () => {
+  
+  const handleSend = () => {
     if (inputText.trim() === '') {
       return;
     }
 
-    const currentTime = new Date().toLocaleTimeString(); // Captura a hora atual
-
-    // Adicione a mensagem do remetente atual com a hora
-    setMessages([...messages, { text: inputText, isSender: true, time: currentTime }]);
+    setMessages([...messages, { text: inputText, isSender: true }]);
     setInputText('');
   };
 
@@ -46,7 +53,7 @@ export default function Conversations() {
       <FlatList
         data={messages}
         renderItem={({ item }) => (
-          <Message text={item.text} isSender={item.isSender} time={item.time} />
+          <Message text={item.text} isSender={item.isSender} />
         )}
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={styles.messagesContainer}
@@ -111,7 +118,7 @@ const styles = StyleSheet.create({
   },
   receiverMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#6959CD',
+    backgroundColor: '#400078',
     color: 'black',
     borderColor: 'white',
     borderWidth: 1,
@@ -178,10 +185,5 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: 'white',
     fontSize: 16,
-  },
-  messageTime: {
-    fontSize: 8,
-    color: '#c6ee79', // Cor da hora
-    marginTop: 2, // espaçamento
   },
 });

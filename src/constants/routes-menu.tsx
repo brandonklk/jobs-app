@@ -1,5 +1,5 @@
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
-
+import ChatListScreen from "app/(tabs)/settings/chat-list";
 import { colors } from "./colors";
 import { ItemMenu } from "@/interfaces/constants";
 
@@ -9,7 +9,7 @@ const baseRouterSettings = "settings";
 
 export const routesExcludeTab = [
   `/${baseRouterSettings}/profile`,
-  `/${baseRouterSettings}/conversations`,
+  `/${baseRouterSettings}/chat-list`,
   `/${baseRouterSettings}/create-profile-work`,
   `/${baseRouterSettings}/settings-app`,
   `/${baseRouterSettings}/help`,
@@ -39,7 +39,7 @@ export const routerMenu: ItemMenu[] = [
   // },
   {
     id: 2,
-    href: `${baseRouterSettings}/conversations`,
+    href: `${baseRouterSettings}/chat-list`,
     title: "Conversas",
     iconStart: (
       <MaterialIcons name="chat-bubble" size={sizeIcon} color={colorIcon} />

@@ -5,6 +5,8 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import React from 'react';
+
 
 export const unstable_settings = {
   initialRouteName: "menu",
@@ -17,22 +19,23 @@ const StackLayout = () => {
   };
   return (
     <Stack
-      initialRouteName="menu"
-      screenOptions={{
-        headerShown: true,
-        headerBackTitleVisible: false,
-        headerTintColor: colors.white,
-        headerStyle: { backgroundColor: colors.sky[600] },
-      }}
-    >
+    initialRouteName="menu"
+    screenOptions={{
+      headerShown: true,
+      headerBackTitleVisible: false,
+      headerTintColor: colors.white,
+      headerStyle: { backgroundColor: colors.sky[600] },
+    }}
+  >
       <Stack.Screen
         name="menu"
         options={{ title: "Configurações", contentStyle: contentStyle }}
       />
-      <Stack.Screen
-        name="conversations"
-        options={{ title: "Conversas - Chat", contentStyle: contentStyle }}
+     <Stack.Screen
+        name="chat-list"
+        options={{ title: "Lista de Conversas", contentStyle: contentStyle }}
       />
+
       <Stack.Screen
         name="create-profile-work"
         options={{ title: "Quero Trabalhar", contentStyle: contentStyle }}

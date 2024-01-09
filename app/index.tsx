@@ -136,7 +136,7 @@ const styles = {
     borderRadius: 10,
   },
   button: {
-    backgroundColor: "blue",
+    backgroundColor: "#400078",
     padding: 10,
     margin: 5,
     width: 300,
