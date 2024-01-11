@@ -35,7 +35,10 @@ const StackLayout = () => {
         name="chat-list"
         options={{ title: "Lista de Conversas", contentStyle: contentStyle }}
       />
-
+     <Stack.Screen
+        name="conversations"
+        options={{ title: "Conversa", contentStyle: contentStyle }}
+      />
       <Stack.Screen
         name="create-profile-work"
         options={{ title: "Quero Trabalhar", contentStyle: contentStyle }}

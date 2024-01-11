@@ -91,7 +91,7 @@ export default () => {
     >
       <Tabs.Screen name="map" />
       <Tabs.Screen name="works" />
-      <Tabs.Screen name="settings" />
+      <Tabs.Screen name="settings" options={ { href: null}}/>
     </Tabs>
   );
 };

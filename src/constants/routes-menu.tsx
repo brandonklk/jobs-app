@@ -10,6 +10,7 @@ const baseRouterSettings = "settings";
 export const routesExcludeTab = [
   `/${baseRouterSettings}/profile`,
   `/${baseRouterSettings}/chat-list`,
+  `/${baseRouterSettings}/conversations`,
   `/${baseRouterSettings}/create-profile-work`,
   `/${baseRouterSettings}/settings-app`,
   `/${baseRouterSettings}/help`,

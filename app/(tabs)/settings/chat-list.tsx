@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { router } from 'expo-router';
 import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Conversations from './conversations';
@@ -52,9 +53,15 @@ const ChatListScreen = () => {
   }, []);
 
   const navigateToChat = (chatId, chatName) => {
-    navigation.navigate('conversations', { chatId, chatName });
+    router.push({
+      pathname: '(tabs)/settings/conversations', 
+      state: {
+        chatId,
+        chatName,
+      },
+    });
   };
-
+  
   const renderChatItem = (item) => {
     const swipeoutButtons = [
       {

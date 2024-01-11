@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { router } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Conversations from './settings/conversations';
 
@@ -12,10 +13,10 @@ const Works = () => {
   
 
   const handleSendMessage = (professionalId, professionalName) => {
-    navigation.navigate('conversations', {
+    router.push({pathname: '(tabs)/settings/conversations', params: {
       chatId: professionalId,
       chatName: professionalName,
-    });    
+    }});
   };
   
   

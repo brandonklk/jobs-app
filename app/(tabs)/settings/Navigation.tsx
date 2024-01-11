@@ -13,7 +13,7 @@ function Navigation() {
       <Stack.Navigator initialRouteName="ChatList">
       <Stack.Screen name="chat-list" component={ChatListScreen}/>
         <Stack.Screen name="ChatScreen" component={ChatScreen} /> 
-       <Stack.Screen name="Conversations" component={Conversations} />
+       <Stack.Screen name="conversations" component={Conversations} />
       </Stack.Navigator>
     </NavigationContainer>
   );

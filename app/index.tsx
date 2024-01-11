@@ -1,22 +1,26 @@
-import React, { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity, Image } from "react-native";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
-import logo from '../assets/logo.png';
-import { getFirestore, getDoc, doc } from 'firebase/firestore';
-import { initializeAuth, getReactNativePersistence, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import 'firebase/auth';
-import 'firebase/compat/auth';
+import {
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from 'react-native';
+import * as Google from 'expo-google-app-auth';
+import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
 import firebase from 'firebase/compat/app';
-import 'firebase/compat/database';
+import 'firebase/compat/auth';
 import firebaseConfig from '../app/src/Services/firebaseConfig.js';
+import logo from '../assets/logo.png';
+
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
 firebase.initializeApp(firebaseConfig);
-
 
 export default function Login() {
   const { push } = useRouter();
@@ -26,6 +30,24 @@ export default function Login() {
   const [name, setName] = useState("");
 
   const auth = firebase.auth();
+
+  
+
+  useEffect(() => {
+    const configureGoogleSignIn = async () => {
+      try {
+        await Google.configureAsync({
+          iosClientId: 'SEU_IOS_CLIENT_ID',
+          androidClientId: '273563287501-4p9586n56mddh9at7j45ed25ngjmgfj7.apps.googleusercontent.com',
+          scopes: ['profile', 'email'],
+        });
+      } catch (err) {
+        console.log('Erro ao configurar o login do Google:', err);
+      }
+    };
+    configureGoogleSignIn();
+  }, []);
+
 
   const handleLogin = () => {
     auth.signInWithEmailAndPassword(email, password) // Use signInWithEmailAndPassword diretamente com 'auth'
@@ -55,6 +77,57 @@ export default function Login() {
       });
   };
   
+  async function handleGoogleLogin() {
+    try {
+      // Verifica se o dispositivo suporta o Google Play Services
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      // Obtém o token de ID do usuário
+      const { idToken } = await GoogleSignin.signIn();
+  
+      // Cria uma credencial do Google com o token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+  
+      // Faz o login do usuário com a credencial
+      const result = await auth().signInWithCredential(googleCredential);
+  
+      console.log('Usuário do Firebase:', result.user);
+      // Redirecionamento após o login bem-sucedido
+      // Push para a página desejada após o login
+      push("(tabs)/map");
+    } catch (error) {
+      console.error('Erro ao iniciar o login com o Google:', error);
+      Alert.alert('Erro ao fazer login com o Google');
+    }
+  }
+
+  const handleFacebookLogin = async () => {
+    try {
+      const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+
+      if (result.isCancelled) {
+        throw 'User cancelled the login process';
+      }
+
+      const data = await AccessToken.getCurrentAccessToken();
+
+      if (!data) {
+        throw 'Something went wrong obtaining access token';
+      }
+
+      const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
+      await auth().signInWithCredential(facebookCredential);
+
+      // Redirecionamento após o login bem-sucedido
+      push("(tabs)/map");
+
+      console.log('Login com Facebook realizado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao fazer login com o Facebook:', error);
+      // Exibir mensagem de erro para o usuário
+    }
+  };
+
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Image source={logo} style={styles.logo} />
@@ -116,12 +189,14 @@ export default function Login() {
       {/* Social login buttons */}
       <View style={{ alignItems: "center" }}>
         {/* Code for Google, Facebook, and Apple login buttons */}
-        <TouchableOpacity onPress={() => console.log("Login com Google")} style={styles.socialButton}>
-          <Image source={require('assets/google.png')} style={styles.socialIcon} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => console.log("Login com Facebook")} style={styles.socialButton}>
-          <Image source={require('assets/facebook.png')} style={styles.socialIcon} />
-        </TouchableOpacity>
+        <TouchableOpacity onPress={(handleGoogleLogin)=> console.log("Login com Gooogle")} style={styles.socialButton}>
+  <Image source={require('assets/google.png')} style={styles.socialIcon} />
+</TouchableOpacity>
+
+<TouchableOpacity onPress={handleFacebookLogin} style={styles.socialButton}>
+  <Image source={require('assets/facebook.png')} style={styles.socialIcon} />
+</TouchableOpacity>
+
 
       </View>
     </View>
